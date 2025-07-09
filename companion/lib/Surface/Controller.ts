@@ -36,7 +36,6 @@ import { SurfaceUSBVECFootpedal } from './USB/VECFootpedal.js'
 import { SurfaceIPVideohubPanel, VideohubPanelDeviceInfo } from './IP/VideohubPanel.js'
 import { SurfaceUSBFrameworkMacropad } from './USB/FrameworkMacropad.js'
 import { SurfaceUSB203SystemsMystrix } from './USB/203SystemsMystrix.js'
-import { SurfaceUSBMiraboxStreamDock } from './USB/MiraboxStreamDock.js'
 import { SurfaceGroup } from './Group.js'
 import { SurfaceOutboundController } from './Outbound.js'
 import { SurfaceUSBBlackmagicController } from './USB/BlackmagicController.js'
@@ -879,122 +878,14 @@ export class SurfaceController extends EventEmitter<SurfaceControllerEvents> {
 			}
 
 			// Now do the scan
-			const scanForLoupedeck = !!this.#handlerDependencies.userconfig.getKey('loupedeck_enable')
-			this.#logger.silly('scanForLoupedeck', scanForLoupedeck)
-			const ignoreStreamDeck = streamDeckSoftwareRunning || streamdeckDisabled
+ 
+ 
 			this.#logger.silly('USB: checking devices')
 
-			try {
-				await Promise.allSettled([
-					HID.devicesAsync().then(async (deviceInfos) =>
-						Promise.allSettled(
-							deviceInfos.map(async (deviceInfo) => {
-								this.#logger.silly('found device ' + JSON.stringify(deviceInfo))
-								if (deviceInfo.path && !this.#surfaceHandlers.has(deviceInfo.path)) {
-									if (!ignoreStreamDeck) {
-										if (getStreamDeckDeviceInfo(deviceInfo)) {
-											await this.#addDevice(deviceInfo.path, {}, 'elgato-streamdeck', SurfaceUSBElgatoStreamDeck)
-											return
-										}
-									}
-
-									if (
-										deviceInfo.vendorId === 0xffff &&
-										(deviceInfo.productId === 0x1f40 || deviceInfo.productId === 0x1f41)
-									) {
-										await this.#addDevice(deviceInfo.path, {}, 'infinitton', SurfaceUSBInfinitton)
-									} else if (
-										// More specific match has to be above xkeys
-										deviceInfo.vendorId === vecFootpedal.vids.VEC &&
-										deviceInfo.productId === vecFootpedal.pids.FOOTPEDAL
-									) {
-										if (this.#handlerDependencies.userconfig.getKey('vec_footpedal_enable')) {
-											await this.#addDevice(deviceInfo.path, {}, 'vec-footpedal', SurfaceUSBVECFootpedal)
-										}
-									} else if (deviceInfo.vendorId === 1523 && deviceInfo.interface === 0) {
-										if (this.#handlerDependencies.userconfig.getKey('xkeys_enable')) {
-											await this.#addDevice(deviceInfo.path, {}, 'xkeys', SurfaceUSBXKeys)
-										}
-									} else if (isAShuttleDevice(deviceInfo)) {
-										if (this.#handlerDependencies.userconfig.getKey('contour_shuttle_enable')) {
-											await this.#addDevice(deviceInfo.path, {}, 'contour-shuttle', SurfaceUSBContourShuttle)
-										}
-									} else if (
-										deviceInfo.vendorId === 0x32ac && // frame.work
-										deviceInfo.productId === 0x0013 && // macropod
-										deviceInfo.usagePage === 0xffdd && // rawhid interface
-										deviceInfo.usage === 0x61
-									) {
-										await this.#addDevice(deviceInfo.path, {}, 'framework-macropad', SurfaceUSBFrameworkMacropad)
-									} else if (
-										this.#handlerDependencies.userconfig.getKey('blackmagic_controller_enable') &&
-										getBlackmagicControllerDeviceInfo(deviceInfo)
-									) {
-										await this.#addDevice(deviceInfo.path, {}, 'blackmagic-controller', SurfaceUSBBlackmagicController)
-									} else if (
-										deviceInfo.vendorId === 0x0203 && // 203 Systems
-										(deviceInfo.productId & 0xffc0) == 0x1040 && // Mystrix
-										deviceInfo.usagePage === 0xff00 && // rawhid interface
-										deviceInfo.usage === 0x01
-									) {
-										if (this.#handlerDependencies.userconfig.getKey('mystrix_enable')) {
-											await this.#addDevice(deviceInfo.path, {}, '203-mystrix', SurfaceUSB203SystemsMystrix)
-										}
-									} else if (
-										(deviceInfo.vendorId === 0x6602 || deviceInfo.vendorId === 0x6603) && // Mirabox
-										(deviceInfo.productId === 0x1001 ||
-											deviceInfo.productId === 0x1007 ||
-											deviceInfo.productId === 0x1005 ||
-											deviceInfo.productId === 0x1006) && // Stream Dock N4 or 293V3
-										deviceInfo.interface === 0
-									) {
-										if (this.#handlerDependencies.userconfig.getKey('mirabox_streamdock_enable')) {
-											await this.#addDevice(deviceInfo.path, {}, 'mirabox-streamdock', SurfaceUSBMiraboxStreamDock)
-										}
-									}
-								}
-							})
-						)
-					),
-					scanForLoupedeck
-						? listLoupedecks().then((deviceInfos) =>
-								Promise.allSettled(
-									deviceInfos.map(async (deviceInfo) => {
-										this.#logger.info('found loupedeck', deviceInfo)
-										if (!this.#surfaceHandlers.has(deviceInfo.path)) {
-											if (
-												deviceInfo.model === LoupedeckModelId.LoupedeckLive ||
-												deviceInfo.model === LoupedeckModelId.LoupedeckLiveS ||
-												deviceInfo.model === LoupedeckModelId.RazerStreamController ||
-												deviceInfo.model === LoupedeckModelId.RazerStreamControllerX
-											) {
-												await this.#addDevice(deviceInfo.path, {}, 'loupedeck-live', SurfaceUSBLoupedeckLive, true)
-											} else if (
-												deviceInfo.model === LoupedeckModelId.LoupedeckCt ||
-												deviceInfo.model === LoupedeckModelId.LoupedeckCtV1
-											) {
-												await this.#addDevice(deviceInfo.path, {}, 'loupedeck-ct', SurfaceUSBLoupedeckCt, true)
-											}
-										}
-									})
-								)
-							)
-						: null,
-				])
-
-				this.#logger.silly('USB: done')
-
-				if (streamdeckDisabled) {
-					return 'Ignoring Stream Decks devices as the plugin has been enabled'
-				} else if (ignoreStreamDeck) {
-					return 'Ignoring Stream Decks devices as the stream deck app is running'
-				} else {
-					return undefined
-				}
-			} catch (e) {
+ 
 				this.#logger.silly('USB: scan failed ' + e)
 				throw 'Scan failed'
-			}
+ 
 		} finally {
 			this.#runningRefreshDevices = false
 		}

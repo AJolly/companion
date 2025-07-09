@@ -87,19 +87,7 @@ const generatorConfig: Record<string, ConfigForPlugin> = {
 			},
 		],
 	},
-	MiraboxStreamDock: {
-		// No npm package - uses node-hid directly
-		manualRules: [
-			{
-				vendorId: 0x6602,
-				productIds: null,
-			},
-			{
-				vendorId: 0x6603,
-				productIds: null,
-			},
-		],
-	},
+
 	Util: {
 		// Ignore file
 	},

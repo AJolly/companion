@@ -225,10 +225,7 @@ class LogController {
 	/**
 	 * Initialize UI logging
 	 */
-	init(appInfo: AppInfo, ioController: UIHandler): void {
-		this.#ioController = ioController
-		this.#logger.info('Sentry error reporting is disabled')
-	}
+
 }
 
 // Get this thing started right away!

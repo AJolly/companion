@@ -71,9 +71,6 @@ jobs:
           tar -cvzf companion-x64.tar.gz companion-x64
         env:
           CI: 1
-          SENTRY_DSN: ${{ secrets.SENTRY2_DSN }}
-          VITE_SENTRY_DSN: ${{ secrets.SENTRY2_UI_DSN }}
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY2_AUTH_TOKEN }}
           USE_HARD_LINKS: false
 
       - name: Determine files to upload
