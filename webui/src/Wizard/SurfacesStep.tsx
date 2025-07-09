@@ -33,63 +33,7 @@ export function SurfacesStep({ config, setValue }: SurfacesStepProps) {
 					onChange={() => setValue('elgato_plugin_enable', true)}
 				/>
 			</div>
-			<div className="indent3">
-				<CFormCheck
-					label="X-keys USB Keypads"
-					checked={config.xkeys_enable}
-					onChange={(e) => setValue('xkeys_enable', e.currentTarget.checked)}
-				/>
-			</div>
-
-			<div className="indent3">
-				<CFormCheck
-					label="Loupedeck and Razer Stream Controller USB Devices"
-					checked={config.loupedeck_enable}
-					onChange={(e) => setValue('loupedeck_enable', e.currentTarget.checked)}
-				/>
-			</div>
-
-			<div className="indent3">
-				<CFormCheck
-					label="Mirabox Stream Dock USB Devices"
-					checked={config.mirabox_streamdock_enable}
-					onChange={(e) => setValue('mirabox_streamdock_enable', e.currentTarget.checked)}
-				/>
-			</div>
-
-			<div className="indent3">
-				<CFormCheck
-					label="Contour Shuttle USB Devices"
-					checked={config.contour_shuttle_enable}
-					onChange={(e) => setValue('contour_shuttle_enable', e.currentTarget.checked)}
-				/>
-			</div>
-
-			<div className="indent3">
-				<CFormCheck
-					label="VEC Footpedal USB Devices"
-					checked={config.vec_footpedal_enable}
-					onChange={(e) => setValue('vec_footpedal_enable', e.currentTarget.checked)}
-				/>
-			</div>
-
-			<div className="indent3">
-				<CFormCheck
-					label="203 Systems Mystrix USB Devices"
-					checked={config.mystrix_enable}
-					onChange={(e) => setValue('mystrix_enable', e.currentTarget.checked)}
-				/>
-			</div>
-
-			<br />
-			<h5>IP Surface Listeners</h5>
-			<div className="indent3">
-				<CFormCheck
-					label="Videohub Panel Listener"
-					checked={config.videohub_panel_enabled}
-					onChange={(e) => setValue('videohub_panel_enabled', e.currentTarget.checked)}
-				/>
-			</div>
+			 
 		</div>
 	)
 }

@@ -1143,10 +1143,6 @@ export const routeTree = rootRoute
       "filePath": "app/modules/$moduleId.tsx",
       "parent": "/_app/modules"
     },
-    "/_app/settings/advanced": {
-      "filePath": "app/settings/advanced.tsx",
-      "parent": "/_app"
-    },
     "/_app/settings/buttons": {
       "filePath": "app/settings/buttons.tsx",
       "parent": "/_app"

@@ -41,13 +41,13 @@ export class DataUserConfig extends EventEmitter<DataUserConfigEvents> {
 
 		page_direction_flipped: false,
 		page_plusminus: false,
-		remove_topbar: false,
+		remove_topbar: true,
 
-		xkeys_enable: true,
+		xkeys_enable: false,
 		elgato_plugin_enable: false, // Also disables local streamdeck
-		usb_hotplug: true,
+		usb_hotplug: false,
 		loupedeck_enable: false,
-		mirabox_streamdock_enable: true,
+		mirabox_streamdock_enable: false,
 		contour_shuttle_enable: false,
 		vec_footpedal_enable: false,
 		blackmagic_controller_enable: false,
@@ -229,8 +229,8 @@ export class DataUserConfig extends EventEmitter<DataUserConfigEvents> {
 
 			// Enable the http api (both modern and legacy)
 			if (this.#data.http_api_enabled === undefined) {
-				this.#data.http_api_enabled = true
-				this.#data.http_legacy_api_enabled = true
+				this.#data.http_api_enabled = false
+				this.#data.http_legacy_api_enabled = false
 			}
 		}
 	}

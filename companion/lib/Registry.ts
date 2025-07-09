@@ -18,7 +18,7 @@ import { UIController } from './UI/Controller.js'
 import { UIHandler } from './UI/Handler.js'
 import { sendOverIpc, showErrorMessage } from './Resources/Util.js'
 import { VariablesController } from './Variables/Controller.js'
-import { DataMetrics } from './Data/Metrics.js'
+
 import { ImportExportController } from './ImportExport/Controller.js'
 import { ServiceOscSender } from './Service/OscSender.js'
 import type { ControlCommonEvents } from './Controls/ControlDependencies.js'
@@ -131,7 +131,7 @@ export class Registry {
 
 	#importExport!: ImportExportController
 
-	#metrics!: DataMetrics
+	
 
 	/**
 	 * The 'data' controller
@@ -182,7 +182,7 @@ export class Registry {
 
 		this.ui = new UIController(this.#appInfo, this.#internalApiRouter)
 		this.io = this.ui.io
-		LogController.init(this.#appInfo, this.ui.io)
+		//LogController.init(this.#appInfo, this.ui.io)
 
 		this.db = new DataDatabase(this.#appInfo.configDir)
 		this.#data = new DataController(this.#appInfo, this.db)
@@ -196,7 +196,7 @@ export class Registry {
 	 * @param bindPort
 	 */
 	async ready(extraModulePath: string, bindIp: string, bindPort: number) {
-		this.#logger.debug('launching core modules')
+		//this.#logger.debug('launching core modules')
 
 		try {
 			const controlEvents = new EventEmitter<ControlCommonEvents>()
@@ -265,7 +265,7 @@ export class Registry {
 				this.graphics
 			)
 
-			this.#metrics = new DataMetrics(this.#appInfo, this.surfaces, this.instance)
+			
 			this.#services = new ServiceController(
 				serviceApi,
 				this.userconfig,
@@ -334,7 +334,6 @@ export class Registry {
 			})
 
 			// old 'modules_loaded' events
-			this.#metrics.startCycle()
 			this.ui.update.startCycle()
 
 			this.controls.init()

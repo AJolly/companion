@@ -411,11 +411,11 @@ form.row > * {
 
 	.split-panels {
 		> .primary-panel {
-			flex: 0 0 40%;
+			flex: 0 0 60%;
 		}
 
 		> .secondary-panel {
-			flex: 0 0 60%;
+			flex: 0 0 40%;
 		}
 	}
 }

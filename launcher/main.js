@@ -2,7 +2,6 @@
 import path from 'path'
 import url, { fileURLToPath } from 'url'
 import fs from 'fs-extra'
-import { init, getCurrentScope } from '@sentry/electron/main'
 import systeminformation from 'systeminformation'
 import Store from 'electron-store'
 import electron, { ipcMain, app, BrowserWindow, dialog } from 'electron'
@@ -136,16 +135,6 @@ if (!lock) {
 		defaults: configDefaults,
 	})
 
-	let sentryDsn
-	try {
-		sentryDsn = fs
-			.readFileSync(new URL('/SENTRY', import.meta.url))
-			.toString()
-			.trim()
-	} catch (e) {
-		console.log('Sentry DSN not located')
-	}
-
 	let companionRootPath = process.resourcesPath
 	if (!app.isPackaged) {
 		// // Try the dist folder above
@@ -171,30 +160,6 @@ if (!lock) {
 		appStatus: 'Unknown',
 		appURL: 'Waiting for webserver..',
 		appLaunch: null,
-	}
-
-	if (app.isPackaged && sentryDsn && sentryDsn.substring(0, 8) == 'https://') {
-		console.log('Configuring sentry error reporting')
-		init({
-			dsn: sentryDsn,
-			release: `companion@${appInfo.appVersion}`,
-			beforeSend(event) {
-				// if (event.exception) {
-				// 	showReportDialog()
-				// }
-				return event
-			},
-		})
-
-		try {
-			const scope = getCurrentScope()
-			scope.setUser({ id: machineId })
-			scope.setExtra('build', appInfo.appVersion)
-		} catch (e) {
-			console.log('Error setting up sentry info: ', e)
-		}
-	} else {
-		console.log('Sentry error reporting is disabled')
 	}
 
 	function sendAppInfo() {

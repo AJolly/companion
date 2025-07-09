@@ -1,4 +1,3 @@
-import { sentryVitePlugin } from '@sentry/vite-plugin'
 import { defineConfig } from 'vite'
 import reactPlugin from '@vitejs/plugin-react'
 import legacyPlugin from '@vitejs/plugin-legacy'
@@ -41,14 +40,6 @@ export default defineConfig({
 		legacyPlugin({
 			targets: ['defaults', 'not IE 11', 'safari >= 12.1'],
 		}),
-		process.env.VITE_SENTRY_DSN
-			? sentryVitePlugin({
-					org: 'bitfocus',
-					project: 'companion-ui',
-					url: 'https://sentry2.bitfocus.io/',
-					release: { name: buildFile },
-				})
-			: undefined,
 	],
 	css: {
 		preprocessorOptions: {

@@ -45,7 +45,7 @@ import type { ControlsController } from '../Controls/Controller.js'
 import type { UIHandler } from '../UI/Handler.js'
 import type { VariablesController } from '../Variables/Controller.js'
 import type { PageController } from '../Page/Controller.js'
-import type { ServiceOscSender } from '../Service/OscSender.js'
+
 import type { InstanceSharedUdpManager } from './SharedUdpManager.js'
 import {
 	ActionEntityModel,
@@ -64,8 +64,7 @@ export interface InstanceModuleWrapperDependencies {
 	readonly io: UIHandler
 	readonly variables: VariablesController
 	readonly page: PageController
-	readonly oscSender: ServiceOscSender
-
+	
 	readonly instanceDefinitions: InstanceDefinitions
 	readonly instanceStatus: InstanceStatus
 	readonly sharedUdpManager: InstanceSharedUdpManager

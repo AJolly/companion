@@ -1,8 +1,5 @@
 const path = require('path')
 const fs = require('fs')
-const { sentryWebpackPlugin } = require('@sentry/webpack-plugin')
-
-const sentryAuthToken = process.env.SENTRY_AUTH_TOKEN
 
 const distPath = path.resolve(__dirname, '../dist')
 const buildFile = fs.readFileSync(path.join(__dirname, '../BUILD')).toString().trim()
@@ -14,7 +11,6 @@ module.exports = {
 		RenderThread: './dist/Graphics/Thread.js',
 	},
 	mode: 'production',
-	devtool: sentryAuthToken ? 'source-map' : undefined,
 	output: {
 		// filename: 'main.js',
 		path: distPath,
@@ -67,30 +63,8 @@ module.exports = {
 					filename: 'BUILD',
 				},
 			},
-			{
-				test: /SENTRY$/,
-				type: 'asset/resource',
-				generator: {
-					filename: 'SENTRY',
-				},
-			},
 		],
 	},
 	plugins: [
-		sentryAuthToken
-			? sentryWebpackPlugin({
-					authToken: sentryAuthToken,
-
-					org: 'bitfocus',
-					project: 'companion',
-
-					release: {
-						name: `companion@${buildFile}`,
-					},
-					errorHandler: (err) => {
-						console.warn('Sentry error', err)
-					},
-				})
-			: '',
 	].filter(Boolean),
 }

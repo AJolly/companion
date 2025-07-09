@@ -8,20 +8,12 @@ import winston from 'winston'
 import Transport from 'winston-transport'
 import supportsColor from 'supports-color'
 import { LogColors } from './Colors.js'
-import { init, addBreadcrumb, getCurrentScope, rewriteFramesIntegration } from '@sentry/node'
 import debounceFn from 'debounce-fn'
 import type { UIHandler, ClientSocket } from '../UI/Handler.js'
 import type { ClientLogLine } from '@companion-app/shared/Model/LogLine.js'
 import type { AppInfo } from '../Registry.js'
 
 export type Logger = winston.Logger
-
-const SentrySeverity = {
-	debug: 'debug',
-	info: 'info',
-	warn: 'warning',
-	error: 'error',
-}
 
 type LogLineFn = (line: any) => void
 class ToMemoryTransport extends Transport {
@@ -58,11 +50,6 @@ const LogRoom = 'logs'
  * this program.
  */
 class LogController {
-	/**
-	 * The Sentry <code>addBreadcrumb</code> function, if initialized
-	 */
-	#addBreadcrumb: typeof addBreadcrumb | null = null
-
 	#history: ClientLogLine[] = []
 
 	#ioController: UIHandler | null = null
@@ -217,15 +204,6 @@ class LogController {
 		if (this.#history.length > 5000) {
 			this.#history.shift()
 		}
-
-		if (typeof this.#addBreadcrumb === 'function') {
-			this.#addBreadcrumb({
-				category: 'source',
-				// @ts-ignore
-				level: SentrySeverity[line.level] || SentrySeverity.debug,
-				message: `${line.source}: ${line.message}`,
-			})
-		}
 	}
 
 	/**
@@ -245,50 +223,11 @@ class LogController {
 	}
 
 	/**
-	 * Initialize Sentry and UI logging
+	 * Initialize UI logging
 	 */
 	init(appInfo: AppInfo, ioController: UIHandler): void {
 		this.#ioController = ioController
-
-		// Allow the DSN to be provided as an env variable
-		let sentryDsn = process.env.SENTRY_DSN
-		if (!sentryDsn) {
-			try {
-				sentryDsn = fs
-					.readFileSync(new URL('../../../SENTRY', import.meta.url))
-					.toString()
-					.trim()
-			} catch (e) {
-				this.#logger.info('Sentry DSN not located')
-			}
-		}
-
-		if (sentryDsn && sentryDsn.substring(0, 8) == 'https://') {
-			try {
-				init({
-					dsn: sentryDsn,
-					release: `companion@${appInfo.appBuild || appInfo.appVersion}`,
-					beforeSend(event) {
-						if (event.exception) {
-							console.log('sentry', 'error', JSON.stringify(event.exception, undefined, 4))
-						}
-						return event
-					},
-					integrations: [rewriteFramesIntegration()],
-				})
-
-				const scope = getCurrentScope()
-				scope.setUser({ id: appInfo.machineId })
-				scope.setExtra('build', appInfo.appBuild)
-			} catch (e) {
-				this.#logger.info(`Failed to setup sentry reporting: ${e}`)
-			}
-
-			this.#addBreadcrumb = addBreadcrumb
-			this.#logger.info(`Sentry error reporting configured`)
-		} else {
-			this.#logger.info('Sentry error reporting is disabled')
-		}
+		this.#logger.info('Sentry error reporting is disabled')
 	}
 }
 
